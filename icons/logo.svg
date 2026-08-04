@@ -1,0 +1,15 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background: rounded square, matches popup's ink background -->
+  <rect x="4" y="4" width="120" height="120" rx="30" fill="#12141b"/>
+
+  <!-- Caption plate -->
+  <rect x="22" y="46" width="84" height="42" rx="10" fill="#f2a93b"/>
+
+  <!-- Text line notches (negative space, same as background) -->
+  <rect x="34" y="58" width="34" height="7" rx="3.5" fill="#12141b"/>
+  <rect x="34" y="72" width="52" height="7" rx="3.5" fill="#12141b"/>
+
+  <!-- Tally light: signature dot echoing the "recording" indicator in the popup UI -->
+  <circle cx="97" cy="31" r="11" fill="#6fcf97"/>
+  <circle cx="97" cy="31" r="11" fill="none" stroke="#12141b" stroke-width="3"/>
+</svg>
