@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<title>Meetly AI Notes</title>
+<style>
+  :root {
+    --bg: #f6f3ea;
+    --panel: #fffdf8;
+    --panel-border: #e4ddc9;
+    --text: #3d4234;
+    --text-dim: #8d9280;
+    --accent: #93ab83;
+    --accent-strong: #63805a;
+    --accent-dim: #7c9670;
+    --success: #a7c4a0;
+    --danger: #c58768;
+    --input-bg: #fbf8f0;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, "SF Pro Text", "Segoe UI", sans-serif;
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #14171d;
+    --panel: #1c2029;
+    --panel-border: #2b303c;
+    --text: #ece9e4;
+    --text-dim: #8b8f9c;
+    --accent: #93ab83;
+    --accent-strong: #a8c397;
+    --accent-dim: #7c9670;
+    --success: #8fc99a;
+    --danger: #e0785a;
+    --input-bg: #12151a;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    overflow-x: hidden;
+    max-width: 300px;
+  }
+
+  body {
+    width: 300px;
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+  }
+
+  .wrap { padding: 14px; max-width: 100%; overflow-wrap: break-word; }
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .header-switches {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .lang-switch,
+  .theme-switch {
+    display: flex;
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .lang-switch button,
+  .theme-switch button {
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 7px;
+    border-radius: 0;
+    cursor: pointer;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lang-switch button.active,
+  .theme-switch button.active {
+    background: var(--accent);
+    color: #22301c;
+  }
+
+  .tally {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--accent-strong);
+    box-shadow: 0 0 0 0 rgba(99, 128, 90, 0.5);
+    animation: pulse 2.2s infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(99, 128, 90, 0.45); }
+    70%  { box-shadow: 0 0 0 6px rgba(99, 128, 90, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(99, 128, 90, 0); }
+  }
+
+  .title {
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+
+  .title small {
+    display: block;
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--text-dim);
+    letter-spacing: 0.02em;
+    margin-top: 1px;
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+
+  label {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-dim);
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  input[type="password"] {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    color: var(--text);
+    padding: 7px 8px;
+    font-size: 12px;
+    font-family: var(--mono);
+  }
+
+  input[type="password"]:focus {
+    outline: none;
+    border-color: var(--accent-dim);
+  }
+
+  select {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    color: var(--text);
+    padding: 7px 8px;
+    font-size: 12px;
+    font-family: var(--sans);
+  }
+
+  select:focus {
+    outline: none;
+    border-color: var(--accent-dim);
+  }
+
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .checkbox-row input[type="checkbox"] {
+    accent-color: var(--accent);
+    width: 13px;
+    height: 13px;
+    cursor: pointer;
+  }
+
+  .checkbox-label {
+    font-size: 11px;
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--text);
+    margin-bottom: 0;
+    cursor: pointer;
+  }
+
+  .api-hint {
+    font-size: 10.5px;
+    color: var(--text-dim);
+    margin-top: 6px;
+  }
+
+  .api-hint a {
+    color: var(--accent-strong);
+    text-decoration: none;
+  }
+
+  .api-hint a:hover {
+    text-decoration: underline;
+  }
+
+  .counter-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 2px 2px 0;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stat-right {
+    align-items: flex-end;
+  }
+
+  .counter-num {
+    font-family: var(--mono);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--accent-strong);
+    line-height: 1;
+  }
+
+  .counter-num-sm {
+    font-size: 18px;
+    color: var(--text);
+  }
+
+  .counter-label {
+    font-size: 10.5px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 3px;
+  }
+
+  .btn-row { display: flex; flex-direction: column; gap: 7px; }
+
+  .start-hint {
+    font-size: 10px;
+    color: var(--danger);
+    margin-top: -3px;
+    margin-bottom: -3px;
+    min-height: 12px;
+    line-height: 1.3;
+  }
+
+  button {
+    border: none;
+    border-radius: 7px;
+    padding: 9px 10px;
+    font-size: 12.5px;
+    font-weight: 600;
+    font-family: var(--sans);
+    cursor: pointer;
+    transition: opacity 0.15s ease, transform 0.05s ease;
+  }
+
+  button:active { transform: scale(0.98); }
+
+  button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  button:disabled:active { transform: none; }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #22301c;
+  }
+  .btn-primary:hover { opacity: 0.92; }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--panel-border);
+  }
+  .btn-secondary:hover { border-color: var(--text-dim); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--danger);
+    padding: 6px 10px;
+    font-size: 11.5px;
+    font-weight: 500;
+  }
+  .btn-ghost:hover { opacity: 0.8; }
+
+  #status {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--text-dim);
+    margin-top: 8px;
+    min-height: 13px;
+    line-height: 1.4;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="tally"></div>
+      <div class="title">Meetly AI Notes<small data-i18n="tagline">live transcript &middot; Google Meet</small></div>
+      <div class="header-switches">
+        <div class="theme-switch">
+          <button id="themeLight" title="Light">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          </button>
+          <button id="themeDark" title="Dark">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.3A9 9 0 1 1 11.7 3a7 7 0 0 0 9.3 9.3Z"/></svg>
+          </button>
+        </div>
+        <div class="lang-switch">
+          <button id="langId" class="active">ID</button>
+          <button id="langEn">EN</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <label for="apiKey" data-i18n="apiKeyLabel">Gemini API key</label>
+      <input type="password" id="apiKey" placeholder="AIza..." />
+      <div class="api-hint">
+        <span data-i18n="apiHintPrefix">Belum punya?</span>
+        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" data-i18n="apiHintLink">Ambil gratis di Google AI Studio &rarr;</a>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="counter-row">
+        <div class="stat">
+          <span class="counter-num" id="durationDisplay">00:00</span>
+          <span class="counter-label" id="durationLabel" data-i18n="notStarted">belum dimulai</span>
+        </div>
+        <div class="stat stat-right">
+          <span class="counter-num counter-num-sm" id="charDisplay">0</span>
+          <span class="counter-label" data-i18n="charactersLabel">Karakter</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <label for="summaryLang" data-i18n="summaryLangLabel">Ringkasan dalam bahasa</label>
+      <select id="summaryLang">
+        <option value="id">Bahasa Indonesia</option>
+        <option value="en">English</option>
+        <option value="es">Español</option>
+        <option value="fr">Français</option>
+        <option value="de">Deutsch</option>
+        <option value="ja">日本語</option>
+        <option value="zh">中文</option>
+        <option value="ko">한국어</option>
+        <option value="pt">Português</option>
+        <option value="ar">العربية</option>
+      </select>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-primary" id="startBtn" data-i18n="startBtn">Start (aktifkan caption)</button>
+      <div id="startHint" class="start-hint"></div>
+      <button class="btn-secondary" id="refreshBtn" data-i18n="refreshBtn">Refresh</button>
+      <button class="btn-secondary" id="summarizeBtn" data-i18n="summarizeBtn">Stop &amp; Summarize (.txt)</button>
+      <button class="btn-ghost" id="clearBtn" data-i18n="clearBtn">Clear transkrip</button>
+    </div>
+
+    <div id="status"></div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
