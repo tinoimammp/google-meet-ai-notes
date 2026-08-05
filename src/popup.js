@@ -383,12 +383,17 @@ summarizeBtn.addEventListener("click", () => {
             );
             const finalText = buildFinalText(transcript, fallbackSummary);
             downloadTextFile(finalText, `meeting-notes-${dateStamp()}.txt`);
+            markDownloaded();
             setStatus(t("statusFallbackSaved"));
             return;
           }
 
-          const finalText = buildFinalText(transcript, result.summary);
+          const finalText = buildFinalText(
+            result.correctedTranscript || transcript,
+            result.summary
+          );
           downloadTextFile(finalText, `meeting-notes-${dateStamp()}.txt`);
+          markDownloaded();
           setStatus(t("statusDone"));
         }
       );
@@ -414,6 +419,10 @@ function buildFinalText(transcript, summary) {
     .join("\n");
 
   return header + fullTranscript;
+}
+
+function markDownloaded() {
+  chrome.runtime.sendMessage({ type: "MARK_DOWNLOADED" });
 }
 
 function downloadTextFile(text, filename) {

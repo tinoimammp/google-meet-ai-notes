@@ -75,11 +75,26 @@
     state.lastPushedText = full;
   }
 
+  // Meet buang blok caption lama dari DOM begitu caption box penuh. Tanpa ini,
+  // trackedBlocks bakal terus numpuk nge-hold referensi ke elemen yang udah
+  // lepas dari DOM selama meeting berlangsung, jadi memory leak di meeting panjang.
+  function pruneStaleBlocks(currentBlocks) {
+    trackedBlocks.forEach((block) => {
+      if (currentBlocks.has(block)) return;
+
+      const state = blockState.get(block);
+      if (state?.timer) clearTimeout(state.timer);
+      finalizeBlockNow(block); // jaga-jaga ada teks yang belum sempat di-flush
+      trackedBlocks.delete(block);
+    });
+  }
+
   function scanBlocks() {
     const container = findCaptionContainer();
     if (!container) return;
 
     const currentBlocks = new Set(container.querySelectorAll(BLOCK_SELECTOR));
+    pruneStaleBlocks(currentBlocks);
 
     currentBlocks.forEach((block) => {
       const nameEl = block.querySelector(NAME_SELECTOR);
